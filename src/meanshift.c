@@ -75,7 +75,7 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 
 		while (current_pixel != NULL)
 		{
-			if (color_map[current_pixel->red][current_pixel->green][current_pixel->blue] & 1)
+			if ((color_map[current_pixel->red][current_pixel->green][current_pixel->blue] & 1) == 0)
 			{
 				set_centroid(&average_centroid, 0);
 				count = 0;
@@ -88,11 +88,11 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 				bl = clip(current_pixel->blue - bandwidth);
 				bu = clip(current_pixel->blue + bandwidth);
 
-				for (red = rl; red < ru; red++)
+				for (red = rl; red <= ru; red++)
 				{
-					for (green = gl; green < gu; green++)
+					for (green = gl; green <= gu; green++)
 					{
-						for (blue = bl; blue < bu; blue++)
+						for (blue = bl; blue <= bu; blue++)
 						{
 							if (color_map[red][green][blue] & 2)
 							{
@@ -118,11 +118,13 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 				}
 			}
 
-			gens++;
 			current_pixel = current_pixel->next;
 		}
 
-		for (x = 0; x < img->width; x++)
+		gens++;
+	}
+
+	for (x = 0; x < img->width; x++)
 		{
 			for (y = 0; y < img->height; y++)
 			{
@@ -134,17 +136,17 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 				count = color_map[red][green][blue];
 
 				red = count >> 18;
-				green = (count >> 12) & 64;
-				blue = (count >> 6) & 64;
+				green = (count >> 12) & 63;
+				blue = (count >> 6) & 63;
 
 				red <<= 2;
 				green <<= 2;
 				blue <<= 2;
+				//printf("rgb(%d, %d, %d)\n", red, green, blue);
 
 				set_rgb(img, x, y, red, green, blue);
 			}
 		}
-	}
 
 	free_pixels(first_pixel);
 }
