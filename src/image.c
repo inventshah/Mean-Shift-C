@@ -4,11 +4,13 @@
 #include "image.h"
 #include "utils.h"
 
+#include <math.h>
+
 #include <png.h>
+
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <math.h>
 
 // Get a pointer to RGB array of (x, y) pixel
 png_bytep get_rgb(Image *img, uint32_t x, uint32_t y)

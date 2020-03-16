@@ -11,6 +11,6 @@
 typedef uint32_t*** Map;
 
 Map create_map(void);
-uint8_t get_index(uint32_t num);
+uint8_t get_index(uint8_t num);
 
 #endif

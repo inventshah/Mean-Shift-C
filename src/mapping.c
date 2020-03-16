@@ -1,9 +1,9 @@
 // Sachin Shah
 // March 13, 2020
 
+#include "image.h"
 #include "mapping.h"
 #include "utils.h"
-#include "image.h"
 
 #include "stdint.h"
 #include "stdlib.h"
@@ -28,7 +28,7 @@ Map create_map(void)
 	return temp;
 }
 
-uint8_t get_index(uint32_t num)
+uint8_t get_index(uint8_t num)
 {
 	return gamma_correct(num) >> 2;
 }
