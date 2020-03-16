@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <math.h>
 
 uint8_t clip(int8_t num)
 {
@@ -43,8 +44,6 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 
 	color_map = create_map();
 	counts = create_map();
-	// zero_map(color_map);
-	// zero_map(counts);
 
 	printf("Starting to init pixels\n");
 	for (x = 0; x < img->width; x++)
@@ -52,9 +51,9 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 		for (y = 0; y < img->height; y++)
 		{
 			rgb = get_rgb(img, x, y);
-			red = shift_2(rgb[0]);
-			green = shift_2(rgb[1]);
-			blue = shift_2(rgb[2]);
+			red = get_index(rgb[0]);
+			green = get_index(rgb[1]);
+			blue = get_index(rgb[2]);
 
 			if (counts[red][green][blue] == 0)
 			{
@@ -65,27 +64,6 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 			counts[red][green][blue]++;
 		}
 	}
-
-	// for (red = 0; red < 64; red++)
-	// {
-	// 	for (green = 0; green < 64; green++)
-	// 	{
-	// 		for (blue = 0; blue < 64; blue++)
-	// 		{
-	// 			if (counts[red][green][blue])
-	// 			{
-	// 				printf("rgb(%u, %u, %u) = %u\n", red, green, blue, counts[red][green][blue]);
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	// current_pixel = first_pixel;
-	// while (current_pixel != NULL)
-	// {
-	// 	printf("rgb(%u, %u, %u) = %u\n", current_pixel->red, current_pixel->green, current_pixel->blue, counts[current_pixel->red][current_pixel->green][current_pixel->blue]);
-	// 	current_pixel = current_pixel->next;
-	// }
 
 	while (cont == 1 && gens < max_gens)
 	{
@@ -111,7 +89,7 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 				bl = clip(current_centroid.blue - bandwidth);
 				bu = clip(current_centroid.blue + bandwidth);
 
-				// printf("bounds(%d, %d, %d, %d, %d, %d)\n", rl, ru, gl, gu, bl, bu);
+				//if (current_pixel->red == 62 && current_pixel->green == 61 && current_pixel->blue == 62) printf("bounds(%u, %u, %u, %u, %u, %u): rgb(%u, %u, %u) & cen(%u, %u, %u)\n", rl, ru, gl, gu, bl, bu, current_pixel->red, current_pixel->green, current_pixel->blue, current_centroid.red, current_centroid.green, current_centroid.blue);
 				for (red = rl; red <= ru; red++)
 				{
 					for (green = gl; green <= gu; green++)
@@ -130,17 +108,13 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 				}
 
 				set_centroid(&current_centroid, color_map[current_pixel->red][current_pixel->green][current_pixel->blue]);
-				if (count == 0) printf("rgb(%u, %u, %u) = %u\ncolormap(%u, %u, %u) = %u\n", current_pixel->red, current_pixel->green, current_pixel->blue, counts[current_pixel->red][current_pixel->green][current_pixel->blue], current_centroid.red, current_centroid.green, current_centroid.blue, count);
-
+				//if (gens == 10 && current_pixel->red == 62 && current_pixel->green == 61 && current_pixel->blue == 62) printf("RGB(%u, %u, %u) = %u\n", average_centroid.red, average_centroid.green, average_centroid.blue, count);
 				centroid_divide(&average_centroid, count);
-				
+
 				if (average_centroid.red != current_centroid.red || average_centroid.green != current_centroid.green || average_centroid.blue != current_centroid.blue)
 				{
 					cont = 1;
 					color_map[current_pixel->red][current_pixel->green][current_pixel->blue] = combine(average_centroid.red, average_centroid.green, average_centroid.blue, 0);
-					// printf("rgb(%u, %u, %u) = %u\ncolormap(%u, %u, %u) = %u\n", current_pixel->red, current_pixel->green, current_pixel->blue, counts[current_pixel->red][current_pixel->green][current_pixel->blue], current_centroid.red, current_centroid.green, current_centroid.blue, count);
-					// printf("avg rgb(%u, %u, %u)\n\n", average_centroid.red, average_centroid.green, average_centroid.blue);
-					//fflush(stdout);
 				}
 				else
 				{
@@ -159,11 +133,13 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 		for (y = 0; y < img->height; y++)
 		{
 			rgb = get_rgb(img, x, y);
-			red = shift_2(rgb[0]);
-			green = shift_2(rgb[1]);
-			blue = shift_2(rgb[2]);
+			red = get_index(rgb[0]);
+			green = get_index(rgb[1]);
+			blue = get_index(rgb[2]);
 
 			count = color_map[red][green][blue];
+
+			//if (red > 60 && green > 60 && blue > 60) printf("rgb(%u, %u, %u) -> %u -> rgb(%u, %u, %u)\n", red, green, blue, count, count >> 24, (count >> 16) & 63, (count >> 8) & 63);
 
 			red = count >> 24;
 			green = (count >> 16) & 63;
@@ -172,6 +148,10 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 			red <<= 2;
 			green <<= 2;
 			blue <<= 2;
+
+			red = gamma_reset(red);
+			green = gamma_reset(green);
+			blue = gamma_reset(blue);
 			//printf("rgb(%d, %d, %d)\n", red, green, blue);
 
 			set_rgb(img, x, y, red, green, blue);

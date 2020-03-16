@@ -6,10 +6,11 @@
 
 #include <stdint.h>
 
+#define MAP_SIZE 64
+
 typedef uint32_t*** Map;
 
 Map create_map(void);
-
-void zero_map(Map map);
+uint8_t get_index(uint32_t num);
 
 #endif

@@ -16,8 +16,6 @@ struct pixel
 
 typedef struct pixel Pixel;
 
-uint8_t shift_2(uint8_t num);
-
 Pixel *add_pixel(Pixel *last, uint8_t red, uint8_t green, uint8_t blue);
 void free_pixels(Pixel *root);
 
