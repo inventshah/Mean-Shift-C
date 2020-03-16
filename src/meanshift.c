@@ -145,7 +145,6 @@ void segment(Image *img, uint8_t bandwidth, uint32_t max_gens)
 			red = gamma_reset(red);
 			green = gamma_reset(green);
 			blue = gamma_reset(blue);
-			//printf("rgb(%d, %d, %d)\n", red, green, blue);
 
 			set_rgb(img, x, y, red, green, blue);
 		}
