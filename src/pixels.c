@@ -18,9 +18,9 @@ Pixel *add_pixel(Pixel *last, uint8_t red, uint8_t green, uint8_t blue)
 	Pixel *ptr = (Pixel *) malloc(sizeof(Pixel));
 	check_null(ptr, "malloc failed to find space for a Pixel");
 
-	ptr->red = shift_2(red);
-	ptr->green = shift_2(green);
-	ptr->blue = shift_2(blue);
+	ptr->red = (red);
+	ptr->green = (green);
+	ptr->blue = (blue);
 	ptr->next = NULL;
 
 	if (last != NULL) last->next = ptr;

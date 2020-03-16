@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-uint8_t clip(uint8_t num);
+uint8_t clip(int8_t num);
 
 uint32_t combine(uint8_t red, uint8_t green, uint8_t blue, uint8_t climb);
 

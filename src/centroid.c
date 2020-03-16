@@ -15,7 +15,7 @@ void centroid_add(Centroid *c1, Centroid *c2)
 
 void centroid_divide(Centroid *c1, uint32_t num)
 {
-	if (num == 0) return;
+	//if (num == 0) return;
 	c1->red /= num;
 	c1->green /= num;
 	c1->blue /= num;
@@ -30,7 +30,7 @@ void centroid_times(Centroid *c1, uint32_t num)
 
 void set_centroid(Centroid *c1, uint32_t value)
 {
-	c1->red = value >> 18;
-	c1->green = (value >> 12) & 63;
-	c1->blue = (value >> 6) & 63;
+	c1->red = value >> 24;
+	c1->green = (value >> 16) & 63;
+	c1->blue = (value >> 8) & 63;
 }
